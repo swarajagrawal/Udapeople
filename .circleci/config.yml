@@ -37,3 +37,4 @@ workflows:
   Udaworkflow:
     jobs:
       - build-frontend
+      - build-backend
