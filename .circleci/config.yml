@@ -142,8 +142,25 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment
-      # Here's where you will add some code to rollback on failure      
-
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["79:2d:94:a0:aa:1c:6b:ff:96:ab:8f:41:f4:b2:f7:32"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+      - run:
+          name: Configure server
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment
 workflows:
   Udaworkflow:
     jobs:
@@ -162,3 +179,5 @@ workflows:
 #          filters:
 #            branches:
 #              only: [test-feature-branch]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
