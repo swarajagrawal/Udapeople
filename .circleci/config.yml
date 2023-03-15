@@ -166,6 +166,21 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment
+  run-migrations:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: Run migrations
+          command: |
+            cd backend
+            npm install
+      - run:
+          name: Send migration results to memstash
+          command: |
+            npm run migrations > migrations_dump.txt
+      - destroy-environment
 workflows:
   Udaworkflow:
     jobs:
@@ -186,3 +201,5 @@ workflows:
 #              only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
