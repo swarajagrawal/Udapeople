@@ -179,13 +179,13 @@ jobs:
       - run:
           name: Send migration results to kvdb.io
           command: |
-            npm run migrations > Udapeople/backend/migrations_dump.txt
-            cat Udapeople/backend/migrations_dump.txt
-            if grep -q "has been executed successfully." ~/Udapeople/backend/migrations_dump.txt
+            npm run migrations > backend/migrations_dump.txt
+            cat backend/migrations_dump.txt
+            if grep -q "has been executed successfully." ~/backend/migrations_dump.txt
             then
                 curl https://kvdb.io/X4yEukmKNd5G2BVehVzkvw/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi 
-      - destroy-environment
+#      - destroy-environment
 workflows:
   Udaworkflow:
     jobs:
