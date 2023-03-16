@@ -145,21 +145,26 @@ jobs:
       - destroy-environment
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+#      - image: python:3.7-alpine3.11
+       - image: amazon/aws-cli:latest
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["2e:46:25:13:3a:63:82:97:1d:b1:c3:f6:bc:e8:c7:be"]
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
-            ansible --version
-            pip3 install --upgrade pip
-            pip3 install awscli
-            aws --version
+             yum update
+             yum install -y tar gzip unzip
+             yum -y install http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+             yum -y install ansible
+#            apk add --update ansible
+#            ansible --version
+#            pip3 install --upgrade pip
+#            pip3 install awscli
+#            aws --version
+      - attach_workspace:
+          at: ~/
       - run:
           name: Configure server
           command: |
@@ -179,8 +184,7 @@ jobs:
       - run:
           name: Send migration results to kvdb.io
           command: |
-            npm run migrations > backend/migrations_dump.txt
-            cat backend/migrations_dump.txt
+            npm run migrations > ~/backend/migrations_dump.txt
             if grep -q "has been executed successfully." ~/backend/migrations_dump.txt
             then
                 curl https://kvdb.io/X4yEukmKNd5G2BVehVzkvw/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
@@ -194,18 +198,24 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # your code here
+#            # your code here
       - run:
           name: Get backend url
           command: |
-            # your code here
+            export BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"
+            echo "API_URL = ${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
       - run:
           name: Deploy frontend objects
           command: |
-            # your code here
-      # Here's where you will add some code to rollback on failure
+            cd frontend
+            npm install
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - destroy-environment
 workflows:
   Udaworkflow:
     jobs:
@@ -226,5 +236,8 @@ workflows:
 #              only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
+#      - run-migrations
+#          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [deploy-infrastructure]
+#           requires: [run-migrations]
