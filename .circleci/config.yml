@@ -186,6 +186,26 @@ jobs:
                 curl https://kvdb.io/X4yEukmKNd5G2BVehVzkvw/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi 
       - destroy-environment
+  deploy-frontend:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+      - run:
+          name: Deploy frontend objects
+          command: |
+            # your code here
+      # Here's where you will add some code to rollback on failure
 workflows:
   Udaworkflow:
     jobs:
