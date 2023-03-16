@@ -16,8 +16,9 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS = $(curl -k https://kvdb.io/X4yEukmKNd5G2BVehVzkvw/migration_${CIRCLE_WORKFLOW_ID:0:7})
-            if(( $SUCCESS==1 )); 
+            SUCCESS=$(curl -k https://kvdb.io/X4yEukmKNd5G2BVehVzkvw/migration_${CIRCLE_WORKFLOW_ID:0:7})
+            echo $SUCCESS
+            if (( $SUCCESS==1 )); 
             then
                cd ~/project/backend
                npm install
@@ -191,27 +192,40 @@ jobs:
     steps:
       - checkout
       - run:
+          name: install dependencies
+          command: |
+            sudo apt install curl
+            sudo apt install unzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
           name: Run migrations
           command: |
             cd backend
             npm install
+            npm run migrations > ~/backend/migrations_dump.txt
       - run:
           name: Send migration results to kvdb.io
           command: |
-            npm run migrations > ~/backend/migrations_dump.txt
-            if [ grep -q "has been executed successfully." ~/backend/migrations_dump.txt ]; then
+            cat ~/project/backend/migrations_dump.txt 
+            if grep -q "has been executed successfully." ~/backend/migrations_dump.txt
+            then
                 curl https://kvdb.io/X4yEukmKNd5G2BVehVzkvw/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi 
       - destroy-environment
   deploy-frontend:
     docker:
-      - image: amazon/aws-cli
+#      - image: amazon/aws-cli
+       - image: python:3.11-rc-alpine
     steps:
       - checkout
-#      - run:
-#          name: Install dependencies
-#          command: |
-#            # your code here
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update tar gzip ansible nodejs npm curl && pip install awscli
       - run:
           name: Get backend url
           command: |
@@ -248,10 +262,10 @@ workflows:
 #         filters:
 #           branches:
 #              only: [test-feature-branch]
-      - configure-infrastructure:
+#      - configure-infrastructure:
+#          requires: [deploy-infrastructure]
+      - run-migrations:
           requires: [deploy-infrastructure]
-#      - run-migrations
-#          requires: [configure-infrastructure]
       - deploy-frontend:
-          requires: [deploy-infrastructure]
+          requires: [run-migrations]
 #           requires: [run-migrations]
