@@ -191,6 +191,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: install dependencies
           command: |
@@ -204,12 +206,11 @@ jobs:
           command: |
             cd backend
             npm install
-            echo [web] > migrations_dump.txt
-            npm run migrations >> backend/migrations_dump.txt
+            npm run migrations > migrations_dump.txt
       - run:
           name: Send migration results to kvdb.io
           command: |
-            cat backend/migrations_dump.txt 
+            cat ~/project/backend/migrations_dump.txt 
             if grep -q "has been executed successfully." backend/migrations_dump.txt
             then
                 curl https://kvdb.io/X4yEukmKNd5G2BVehVzkvw/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
@@ -260,11 +261,6 @@ jobs:
              yum install -y tar gzip unzip
              yum -y install http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
              yum -y install ansible
-#            apk add --update ansible
-#            ansible --version
-#            pip3 install --upgrade pip
-#            pip3 install awscli
-#            aws --version
       - attach_workspace:
           at: ~/
       - run:
@@ -305,4 +301,5 @@ workflows:
           requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
-#           requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
