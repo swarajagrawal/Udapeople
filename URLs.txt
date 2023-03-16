@@ -1,2 +1,4 @@
-URL01
+URL01 - Github link
 https://github.com/swarajagrawal/Udapeople
+
+URL02 - Public URL of the S3 bucket created by frontend.yml
