@@ -249,8 +249,8 @@ jobs:
       - revert-migrations
   deploy-backend:
     docker:
-#      - image: python:3.7-alpine3.11
-       - image: amazon/aws-cli
+      - image: python:3.11-rc-alpine
+#      - image: amazon/aws-cli
     steps:
       - checkout
       - add_ssh_keys:
@@ -258,10 +258,12 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-             yum update
-             yum install -y tar gzip unzip
-             yum -y install http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-             yum -y install ansible
+             apk add --update ansible tar npm curl
+             apk add --no-cache aws-cli
+#             yum update
+#             yum install -y tar gzip unzip
+#             yum -y install http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+#             yum -y install ansible
       - attach_workspace:
           at: ~/
       - run:
