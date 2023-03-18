@@ -287,9 +287,10 @@ jobs:
       - checkout
       - run: 
           name: Install dependencies
+#            apk add --update ansible curl nodejs npm
+#            apk add --no-cache aws-cli
           command: |
-            apk add --update ansible curl nodejs npm
-            apk add --no-cache aws-cli
+            apk add --update tar gzip ansible nodejs npm curl && pip install awscli
       - run:
           name: Frontend smoke test.
           command: |
