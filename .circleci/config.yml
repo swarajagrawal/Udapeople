@@ -377,7 +377,7 @@ jobs:
             OldWorkflowID=abc
             echo ${OldWorkflowID}
             echo ${CIRCLE_WORKFLOW_ID:0:7}
-            if [[ ${CIRCLE_WORKFLOW_ID:0:7} != ${OldWorkflowID} ]]
+            if [[ ${CIRCLE_WORKFLOW_ID:0:7} = ${OldWorkflowID} ]]
             then
                echo "Cleaning the mess"
             else
