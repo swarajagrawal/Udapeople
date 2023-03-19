@@ -7,40 +7,42 @@
 #  become: true
 #  apt:
 #    upgrade: yes
-#- name: "install dependencies."
-#  become: true
-#  apt:
-#    name: ["nodejs", "npm"]
-#    state: latest
-#    update_cache: yes
-#- name: "install pm2"
-#  become: true
-#  npm:
-#    name: pm2
-#    global: yes
-#    production: yes
-#    state: present
-- name: create backend directory on EC2
+- name: "install dependencies."
   become: true
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+- name: "install pm2"
+  become: true
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
+- name: create backend directory on EC2
+#  become: true
   file:
     path: /home/ubuntu/backend
 #    path: ~/backend
     state: directory 
-    mode: 0755
+#    mode: 0755
 - name: copy files to backend
-  become: true
+#  become: true
   copy: 
     src: ~/project/artifact.tar.gz
     dest: /home/ubuntu/backend/artifact.tar.gz
 #    dest: ~/backend/artifact.tar.gz
 - name: unzip backend directory
-  become: true
+#  become: true
   shell: |
     cd /home/ubuntu/backend
-    tar -xvf artifact.tar.gz
+    tar xvzf artifact.tar.gz -C .
+    ls -la
 - name: start application
   become: true
   shell: |
     cd /home/ubuntu/backend
-    pm2 stop default
-    pm2 start npm -- start
+    npm install
+    npm run build
+    pm2 start npm --name backend -- start
