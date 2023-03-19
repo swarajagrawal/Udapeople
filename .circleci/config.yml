@@ -362,31 +362,28 @@ jobs:
             yum -y install tar gzip
       - attach_workspace:
           at: ~/
-      - run:
-          name: Get old stack workflow id 
-          command: |
-            OldWorkflowID=$(cat ~/OldWorkflowID.txt)
-            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-            --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-            echo Stack names: "${STACKS[@]}"
-            echo "OldWorkflow: $OldWorkflowID"
-            echo "currentWorflow: ${CIRCLE_WORKFLOW_ID:0:7}"
+#      - run:
+#          name: Get old stack workflow id 
+#          command: |
+#            OldWorkflowID=$(cat ~/OldWorkflowID.txt)
+#            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+#            --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+#            echo Stack names: "${STACKS[@]}"
+#            echo "OldWorkflow: $OldWorkflowID"
+#            echo "currentWorflow: ${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Remove old stacks and files
           command: |
-            echo OldWorkflow
-            echo ${OldWorkflowID}
-            echo $OldWorkflowID
-            echo udapeople-backend-${OldWorkflowID}
-            echo udapeople-backend-$OldWorkflowID
-            echo udapeople-backend-$OldWorkflow
-            ${CIRCLE_WORKFLOW_ID:0:7}
+            echo "OldWorkflow: abcde"
+            echo udapeople-backend-${OldWorkflow}
+            echo "udapeople-backend-${OldWorkflow}"
+            echo ${CIRCLE_WORKFLOW_ID:0:7}
 
             if [[ ${CIRCLE_WORKFLOW_ID:0:7} != ${OldWorkflow} ]]
             then
                echo "Cleaning the mess"
             else
-              echo "$OldWorkflowID==${CIRCLE_WORKFLOW_ID:0:7} -> all good now""
+              echo "${OldWorkflowID}==${CIRCLE_WORKFLOW_ID:0:7} -> all good now""
             fi
 
 workflows:
@@ -417,8 +414,8 @@ workflows:
 #          requires: [run-migrations]  
 #      - smoke-test:
 #          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update
+#      - cloudfront-update
 #          requires: [deploy-backend, deploy-frontend]
 #          requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update]
+      - cleanup
+#          requires: [cloudfront-update]
