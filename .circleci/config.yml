@@ -381,7 +381,7 @@ jobs:
             then
                echo "Cleaning the mess"
             else
-              echo "${OldWorkflowID}==${CIRCLE_WORKFLOW_ID:0:7} -> all good now""
+              echo "${OldWorkflowID}==${CIRCLE_WORKFLOW_ID:0:7}" -> all good now""
             fi
 
 workflows:
