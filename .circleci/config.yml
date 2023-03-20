@@ -358,7 +358,7 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Get old stack workflow id 
+          name: Get old stack workflow id and remove old things
           command: |
             OldWorkflowID=$(cat ~/OldWorkflowID.txt)
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
@@ -366,11 +366,6 @@ jobs:
             echo Stack names: "${STACKS[@]}"
             echo ${OldWorkflowID}
             echo "currentWorflow: ${CIRCLE_WORKFLOW_ID:0:7}"
-      - run:
-          name: Remove old stacks and files
-          command: |
-            echo ${OldWorkflowID}
-            echo ${CIRCLE_WORKFLOW_ID:0:7}
             echo udapeople-backend-${OldWorkflowID}
             echo udapeople-frontend-${OldWorkflowID}
             if [[ ${CIRCLE_WORKFLOW_ID:0:7} != ${OldWorkflowID} ]]
