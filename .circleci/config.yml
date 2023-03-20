@@ -390,8 +390,8 @@ jobs:
 workflows:
   Udaworkflow:
     jobs: 
-      - build-frontend
-      - build-backend
+#      - build-frontend
+#      - build-backend
 #      - test-frontend:
 #          requires: [build-frontend]
 #      - test-backend:
@@ -400,9 +400,9 @@ workflows:
 #          requires: [build-frontend]
 #      - scan-backend:
 #          requires: [build-backend] 
-      - deploy-infrastructure:
+      - deploy-infrastructure
 #          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          requires: [build-backend, build-frontend]
+#          requires: [build-backend, build-frontend]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
