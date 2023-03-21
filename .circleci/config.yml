@@ -182,7 +182,7 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
-#      - destroy-environment
+      - destroy-environment
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
@@ -385,19 +385,18 @@ jobs:
 workflows:
   Udaworkflow:
     jobs: 
-#      - build-frontend
-#      - build-backend
-#      - test-frontend:
-#          requires: [build-frontend]
-#      - test-backend:
-#          requires: [build-backend]
-#      - scan-frontend:
-#          requires: [build-frontend]
-#      - scan-backend:
-#          requires: [build-backend] 
-      - deploy-infrastructure
-#          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-#          requires: [build-backend, build-frontend]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - scan-backend:
+          requires: [build-backend] 
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
@@ -409,7 +408,6 @@ workflows:
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
-#          requires: [deploy-backend, deploy-frontend]
           requires: [smoke-test]
       - cleanup:
           requires: [cloudfront-update]
