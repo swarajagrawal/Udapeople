@@ -158,7 +158,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment
+#      - destroy-environment
   configure-infrastructure:
     docker:
 #      - image: python:3.7-alpine3.11
@@ -385,7 +385,7 @@ jobs:
                aws cloudformation delete-stack --stack-name udapeople-backend-${OldWorkflowID}
                aws cloudformation delete-stack --stack-name udapeople-frontend-${OldWorkflowID}
             else
-              echo "No clean up required!!!!"
+              echo "No clean up required!!!!!!"
             fi
 workflows:
   Udaworkflow:
