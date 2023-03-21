@@ -158,11 +158,11 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-#      - destroy-environment
+      - destroy-environment
   configure-infrastructure:
     docker:
-#      - image: python:3.7-alpine3.11
-       - image: amazon/aws-cli
+       - image: python:3.7-alpine3.11
+#       - image: amazon/aws-cli
     steps:
       - checkout
       - add_ssh_keys:
@@ -170,15 +170,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-             yum update
-             yum install -y tar gzip unzip
-             yum -y install http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-             yum -y install ansible
-#            apk add --update ansible
-#            ansible --version
-#            pip3 install --upgrade pip
-#            pip3 install awscli
-#            aws --version
+            apk add --update ansible
+            apk add curl
+            apk add openssh-client
+            pip install awscli
       - attach_workspace:
           at: ~/
       - run:
