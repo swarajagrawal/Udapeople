@@ -2,14 +2,13 @@ URL01 - Github link
 https://github.com/swarajagrawal/Udapeople
 
 URL02 - Public URL of the S3 bucket created by frontend.yml
-http://udapeople-3bb2521.s3-website-us-west-2.amazonaws.com/#/employees
+http://udapeople-0c35536.s3-website-us-west-2.amazonaws.com
 
 URL03 - Cloudfront
 dxnuuvwdr2snz.cloudfront.net
 
 URL04 - Healthy Backend 
-http://54.245.28.46:3030/api/status
+http://52.89.234.36:3030/api/status
 
 URL05 - Prometheus server 
 http://ec2-54-218-216-245.us-west-2.compute.amazonaws.com:9090/targets
-
